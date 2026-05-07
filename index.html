@@ -60,6 +60,19 @@
       mix-blend-mode: multiply;
     }
 
+    /* Cadre interne : tous les assets sont proportionnés dans ce bloc.
+       Tu peux régler la taille globale de la scène avec width / max-width ici. */
+    .composition {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: min(88vw, 760px);
+      aspect-ratio: 16 / 9;
+      transform: translate(-50%, -50%);
+      overflow: visible;
+      z-index: 1;
+    }
+
     .layer {
       position: absolute;
       inset: 0;
@@ -85,53 +98,53 @@
     #leaves-layer { z-index: 90; }
 
     #sun {
-      width: clamp(125px, 14vw, 210px);
+      width: 15.5%;
       left: 50%;
-      top: 12vh;
+      top: 7%;
       transform: translateX(-50%);
     }
 
     #clouds-left {
-      width: clamp(190px, 25vw, 360px);
-      left: 23vw;
-      top: 30vh;
+      width: 27%;
+      left: 16%;
+      top: 30%;
     }
 
     #clouds-right {
-      width: clamp(190px, 25vw, 360px);
-      right: 22vw;
-      top: 31vh;
+      width: 27%;
+      right: 16%;
+      top: 31%;
     }
 
     #grass {
-      width: min(1100px, 100vw);
+      width: 86%;
       left: 50%;
-      bottom: -1vh;
+      bottom: -2%;
       transform: translateX(-50%);
     }
 
     #pagoda {
-      width: clamp(170px, 21vw, 330px);
+      width: 20%;
       left: 50%;
-      bottom: 4vh;
+      bottom: 5%;
       transform: translateX(-50%);
     }
 
     #crane {
-      width: clamp(92px, 13vw, 185px);
-      left: 31vw;
-      top: 55vh;
+      width: 12%;
+      left: 39%;
+      top: 57%;
     }
 
     .leaf {
-      width: clamp(28px, 4.4vw, 58px);
+      width: 4.2%;
       opacity: 0;
     }
 
-    #leaf-1 { left: 41vw; bottom: 5vh; }
-    #leaf-2 { left: 48vw; bottom: 2vh; width: clamp(22px, 3.6vw, 46px); }
-    #leaf-3 { left: 55vw; bottom: 7vh; width: clamp(26px, 4vw, 52px); }
-    #leaf-4 { left: 61vw; bottom: 3vh; width: clamp(20px, 3.2vw, 42px); }
+    #leaf-1 { left: 42%; bottom: 8%; }
+    #leaf-2 { left: 49%; bottom: 3%; width: 3.5%; }
+    #leaf-3 { left: 56%; bottom: 10%; width: 3.9%; }
+    #leaf-4 { left: 62%; bottom: 5%; width: 3.1%; }
 
     .scroll-cue {
       position: fixed;
@@ -166,12 +179,17 @@
     }
 
     @media (max-width: 768px) {
-      #sun { top: 13vh; }
-      #clouds-left { left: 5vw; top: 30vh; }
-      #clouds-right { right: 4vw; top: 32vh; }
-      #pagoda { width: clamp(150px, 38vw, 230px); bottom: 5vh; }
-      #crane { left: 18vw; top: 56vh; }
-      #grass { width: 135vw; }
+      .composition {
+        width: min(94vw, 540px);
+        top: 48%;
+      }
+
+      #sun { width: 18%; top: 7%; }
+      #clouds-left { width: 30%; left: 9%; top: 29%; }
+      #clouds-right { width: 30%; right: 9%; top: 31%; }
+      #grass { width: 110%; }
+      #pagoda { width: 29%; bottom: 5%; }
+      #crane { width: 16%; left: 31%; top: 58%; }
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -182,35 +200,37 @@
 <body>
   <main id="theatre">
     <section class="scroll-scene" aria-label="Composition théâtrale japonaise animée au scroll">
-      <div class="layer" id="sun-layer" aria-hidden="true">
-        <img id="sun" src="assets/sun.png" alt="">
-      </div>
+      <div class="composition" aria-hidden="true">
+        <div class="layer" id="sun-layer">
+          <img id="sun" src="assets/sun.png" alt="">
+        </div>
 
-      <div class="layer" id="clouds-left-layer" aria-hidden="true">
-        <img id="clouds-left" src="assets/clouds-left.png" alt="">
-      </div>
+        <div class="layer" id="clouds-left-layer">
+          <img id="clouds-left" src="assets/clouds-left.png" alt="">
+        </div>
 
-      <div class="layer" id="clouds-right-layer" aria-hidden="true">
-        <img id="clouds-right" src="assets/clouds-right.png" alt="">
-      </div>
+        <div class="layer" id="clouds-right-layer">
+          <img id="clouds-right" src="assets/clouds-right.png" alt="">
+        </div>
 
-      <div class="layer" id="grass-layer" aria-hidden="true">
-        <img id="grass" src="assets/grass.png" alt="">
-      </div>
+        <div class="layer" id="grass-layer">
+          <img id="grass" src="assets/grass.png" alt="">
+        </div>
 
-      <div class="layer" id="pagoda-layer" aria-hidden="true">
-        <img id="pagoda" src="assets/pagoda.png" alt="">
-      </div>
+        <div class="layer" id="pagoda-layer">
+          <img id="pagoda" src="assets/pagoda.png" alt="">
+        </div>
 
-      <div class="layer" id="crane-layer" aria-hidden="true">
-        <img id="crane" src="assets/crane.png" alt="">
-      </div>
+        <div class="layer" id="crane-layer">
+          <img id="crane" src="assets/crane.png" alt="">
+        </div>
 
-      <div class="layer" id="leaves-layer" aria-hidden="true">
-        <img class="leaf" id="leaf-1" src="assets/leaf-1.png" alt="">
-        <img class="leaf" id="leaf-2" src="assets/leaf-2.png" alt="">
-        <img class="leaf" id="leaf-3" src="assets/leaf-3.png" alt="">
-        <img class="leaf" id="leaf-4" src="assets/leaf-4.png" alt="">
+        <div class="layer" id="leaves-layer">
+          <img class="leaf" id="leaf-1" src="assets/leaf-1.png" alt="">
+          <img class="leaf" id="leaf-2" src="assets/leaf-2.png" alt="">
+          <img class="leaf" id="leaf-3" src="assets/leaf-3.png" alt="">
+          <img class="leaf" id="leaf-4" src="assets/leaf-4.png" alt="">
+        </div>
       </div>
     </section>
 
@@ -255,12 +275,12 @@
       gsap.set(scrollCue, { opacity: 0 })
     } else {
       gsap.set('#sun-layer', { opacity: 0, y: '105vh' })
-      gsap.set('#clouds-left-layer', { opacity: 0, x: '-65vw' })
-      gsap.set('#clouds-right-layer', { opacity: 0, x: '65vw' })
+      gsap.set('#clouds-left-layer', { opacity: 0, x: '-90vw' })
+      gsap.set('#clouds-right-layer', { opacity: 0, x: '90vw' })
       gsap.set('#grass-layer', { opacity: 0, y: '105vh' })
       gsap.set('#pagoda-layer', { opacity: 1, clipPath: 'inset(100% 0% 0% 0%)' })
-      gsap.set('#crane-layer', { opacity: 0, x: '-70vw' })
-      gsap.set('.leaf', { opacity: 0, y: '35vh', rotation: -18 })
+      gsap.set('#crane-layer', { opacity: 0, x: '-90vw' })
+      gsap.set('.leaf', { opacity: 0, y: '45vh', rotation: -18 })
 
       const tl = gsap.timeline({
         defaults: { ease: 'power2.out' },
