@@ -60,13 +60,13 @@
       mix-blend-mode: multiply;
     }
 
-    /* La composition est volontairement beaucoup plus grande que l'écran.
-       Le rendu final doit être cinématographique et recadré comme la référence Figma. */
+    /* Échelle intermédiaire : plus grande qu'un bloc central,
+       mais moins zoomée que la version précédente. */
     .composition {
       position: absolute;
       left: 50%;
       top: 50%;
-      width: max(165vw, 235vh);
+      width: max(135vw, 190vh);
       aspect-ratio: 16 / 9;
       transform: translate(-50%, -50%);
       overflow: visible;
@@ -98,22 +98,22 @@
     #leaves-layer { z-index: 90; }
 
     #sun {
-      width: 27%;
+      width: 24%;
       left: 50%;
-      top: 2%;
+      top: 3%;
       transform: translateX(-50%);
     }
 
     #clouds-left {
-      width: 30%;
-      left: 1.5%;
-      top: 20%;
+      width: 28%;
+      left: 4%;
+      top: 21%;
     }
 
     #clouds-right {
-      width: 31%;
-      right: 0.5%;
-      top: 28%;
+      width: 29%;
+      right: 3%;
+      top: 29%;
     }
 
     #grass {
@@ -124,27 +124,27 @@
     }
 
     #pagoda {
-      width: 32%;
+      width: 28%;
       left: 50%;
-      bottom: -13%;
+      bottom: -12%;
       transform: translateX(-50%);
     }
 
     #crane {
-      width: 20%;
-      left: 16%;
-      top: 39%;
+      width: 17%;
+      left: 19%;
+      top: 41%;
     }
 
     .leaf {
-      width: 5%;
+      width: 4.5%;
       opacity: 0;
     }
 
-    #leaf-1 { left: 35%; bottom: 25%; width: 4.6%; }
-    #leaf-2 { left: 47%; bottom: 54%; width: 4.3%; }
-    #leaf-3 { left: 62%; bottom: 37%; width: 4.1%; }
-    #leaf-4 { left: 55%; bottom: 58%; width: 3.7%; }
+    #leaf-1 { left: 36%; bottom: 25%; width: 4.1%; }
+    #leaf-2 { left: 47%; bottom: 53%; width: 3.8%; }
+    #leaf-3 { left: 61%; bottom: 37%; width: 3.7%; }
+    #leaf-4 { left: 55%; bottom: 57%; width: 3.4%; }
 
     .scroll-cue {
       position: fixed;
@@ -180,16 +180,16 @@
 
     @media (max-width: 768px) {
       .composition {
-        width: max(230vw, 160vh);
+        width: max(190vw, 135vh);
         top: 51%;
       }
 
-      #sun { width: 31%; top: 3%; }
-      #clouds-left { width: 35%; left: -3%; top: 21%; }
-      #clouds-right { width: 35%; right: -4%; top: 29%; }
-      #grass { width: 112%; bottom: -8%; }
-      #pagoda { width: 38%; bottom: -14%; }
-      #crane { width: 27%; left: 7%; top: 41%; }
+      #sun { width: 28%; top: 4%; }
+      #clouds-left { width: 33%; left: -1%; top: 22%; }
+      #clouds-right { width: 33%; right: -2%; top: 30%; }
+      #grass { width: 108%; bottom: -8%; }
+      #pagoda { width: 34%; bottom: -13%; }
+      #crane { width: 24%; left: 10%; top: 42%; }
     }
 
     @media (prefers-reduced-motion: reduce) {
