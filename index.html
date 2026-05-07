@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Portfolio Test 2 - Panneaux empilés</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      width: 100%;
+      min-height: 100%;
+      overflow-x: hidden;
+      font-family: "Syne", sans-serif;
+      background: #120c05;
+      color: #fff;
+    }
+
+    body {
+      min-height: 100vh;
+    }
+
+    .intro {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 2rem;
+      background:
+        radial-gradient(circle at top, rgba(170, 77, 31, 0.45), transparent 42%),
+        #120c05;
+    }
+
+    .intro h1 {
+      max-width: 980px;
+      font-size: clamp(3rem, 9vw, 8rem);
+      line-height: 0.9;
+      letter-spacing: -0.07em;
+      text-transform: uppercase;
+    }
+
+    .intro p {
+      max-width: 680px;
+      margin-top: 1.5rem;
+      color: rgba(255, 255, 255, 0.68);
+      font-size: clamp(1rem, 2vw, 1.25rem);
+      line-height: 1.6;
+    }
+
+    .scroll-indicator {
+      margin-top: 4rem;
+      width: 1px;
+      height: 120px;
+      background: rgba(255, 255, 255, 0.15);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .scroll-indicator::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(to bottom, transparent, #fff, transparent);
+      animation: scrollLine 1.8s ease-in-out infinite;
+    }
+
+    @keyframes scrollLine {
+      to {
+        top: 100%;
+      }
+    }
+
+    .stack-wrapper {
+      position: relative;
+      width: 100%;
+      background: #120c05;
+    }
+
+    .panel-section {
+      height: 100vh;
+      width: 100%;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      perspective: 1200px;
+      transform-style: preserve-3d;
+      overflow: hidden;
+    }
+
+    .panel {
+      position: relative;
+      width: min(92vw, 1180px);
+      height: min(76vh, 720px);
+      border-radius: 2rem;
+      overflow: hidden;
+      transform-origin: center bottom;
+      box-shadow: 0 40px 100px rgba(0, 0, 0, 0.55);
+      background: #211306;
+      will-change: transform;
+    }
+
+    .panel::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(to top, rgba(0, 0, 0, 0.78), rgba(0, 0, 0, 0.08) 55%, rgba(255, 255, 255, 0.06)),
+        repeating-linear-gradient(90deg, rgba(255,255,255,0.035) 0 1px, transparent 1px 7px);
+      z-index: 3;
+      pointer-events: none;
+      mix-blend-mode: screen;
+      opacity: 0.55;
+    }
+
+    .panel-bg {
+      position: absolute;
+      inset: 0;
+      background-size: cover;
+      background-position: center;
+      transform: scale(1.08);
+      filter: contrast(1.05) saturate(0.85);
+    }
+
+    .panel-content {
+      position: absolute;
+      inset: auto 0 0 0;
+      z-index: 5;
+      padding: clamp(1.5rem, 4vw, 4rem);
+    }
+
+    .panel-kicker {
+      display: inline-block;
+      margin-bottom: 0.9rem;
+      color: rgba(255, 255, 255, 0.62);
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+    }
+
+    .panel-title {
+      max-width: 820px;
+      font-size: clamp(2.3rem, 7vw, 6.8rem);
+      line-height: 0.88;
+      letter-spacing: -0.07em;
+      text-transform: uppercase;
+    }
+
+    .panel-text {
+      max-width: 620px;
+      margin-top: 1.2rem;
+      color: rgba(255, 255, 255, 0.72);
+      font-size: clamp(0.95rem, 1.6vw, 1.15rem);
+      line-height: 1.65;
+    }
+
+    .silhouette {
+      position: absolute;
+      z-index: 4;
+      pointer-events: none;
+      background: #050403;
+      filter: drop-shadow(0 12px 22px rgba(0, 0, 0, 0.35));
+    }
+
+    .sun {
+      width: 18vmin;
+      height: 18vmin;
+      border-radius: 50%;
+      right: 12%;
+      top: 14%;
+      background: rgba(255, 206, 115, 0.86);
+      z-index: 2;
+      filter: blur(0.5px);
+    }
+
+    .mountain {
+      width: 74%;
+      height: 36%;
+      left: 13%;
+      bottom: 19%;
+      clip-path: polygon(0 100%, 20% 48%, 31% 68%, 46% 22%, 61% 72%, 74% 42%, 100% 100%);
+      opacity: 0.9;
+    }
+
+    .tree-line {
+      width: 112%;
+      height: 26%;
+      left: -6%;
+      bottom: 0;
+      clip-path: polygon(0 100%, 0 58%, 6% 70%, 9% 42%, 13% 68%, 17% 36%, 22% 66%, 27% 44%, 34% 68%, 38% 34%, 42% 62%, 49% 44%, 56% 70%, 63% 32%, 69% 66%, 75% 46%, 82% 70%, 88% 38%, 94% 68%, 100% 50%, 100% 100%);
+    }
+
+    .torii {
+      width: 42%;
+      height: 50%;
+      right: 9%;
+      bottom: 0;
+      background: transparent;
+      filter: none;
+    }
+
+    .torii::before,
+    .torii::after {
+      content: "";
+      position: absolute;
+      background: #050403;
+    }
+
+    .torii::before {
+      left: 0;
+      right: 0;
+      top: 6%;
+      height: 11%;
+      box-shadow: 0 44px 0 #050403;
+      transform: skewX(-8deg);
+    }
+
+    .torii::after {
+      left: 24%;
+      top: 17%;
+      width: 52%;
+      height: 83%;
+      border-left: 26px solid #050403;
+      border-right: 26px solid #050403;
+    }
+
+    .bamboo {
+      width: 34%;
+      height: 82%;
+      left: -3%;
+      bottom: -4%;
+      background: transparent;
+      filter: none;
+    }
+
+    .bamboo::before,
+    .bamboo::after {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      width: 14px;
+      height: 100%;
+      background: #050403;
+      border-radius: 999px;
+      transform-origin: bottom;
+    }
+
+    .bamboo::before {
+      left: 30%;
+      transform: rotate(-5deg);
+      box-shadow: 40px 14px 0 #050403, 82px -20px 0 #050403;
+    }
+
+    .bamboo::after {
+      left: 56%;
+      height: 92%;
+      transform: rotate(7deg);
+    }
+
+    .outro {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 2rem;
+      background: #090603;
+    }
+
+    .outro h2 {
+      font-size: clamp(2.5rem, 8vw, 7rem);
+      line-height: 0.9;
+      letter-spacing: -0.06em;
+      text-transform: uppercase;
+    }
+
+    @media (max-width: 768px) {
+      .panel {
+        width: 92vw;
+        height: 76vh;
+        border-radius: 1.2rem;
+      }
+
+      .torii {
+        width: 58%;
+        right: -7%;
+      }
+
+      .bamboo {
+        width: 52%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main>
+    <section class="intro">
+      <h1>Portfolio<br>théâtre d’ombres</h1>
+      <p>
+        Prototype GSAP : chaque panneau vient s’ajouter au précédent et reste bloqué dans sa position finale,
+        comme une pile de décors de théâtre japonais.
+      </p>
+      <div class="scroll-indicator" aria-hidden="true"></div>
+    </section>
+
+    <div class="stack-wrapper">
+      <section class="panel-section">
+        <article class="panel">
+          <div class="panel-bg" style="background: linear-gradient(135deg, #46210d, #d07326 45%, #1d0d06);"></div>
+          <div class="sun silhouette"></div>
+          <div class="mountain silhouette"></div>
+          <div class="panel-content">
+            <span class="panel-kicker">Panneau 01</span>
+            <h2 class="panel-title">Fond montagne</h2>
+            <p class="panel-text">Le premier décor reste fixé. Les panneaux suivants viennent s’empiler au-dessus sans l’effacer.</p>
+          </div>
+        </article>
+      </section>
+
+      <section class="panel-section">
+        <article class="panel">
+          <div class="panel-bg" style="background: linear-gradient(135deg, #1c2615, #778c3a 48%, #100c05);"></div>
+          <div class="tree-line silhouette"></div>
+          <div class="panel-content">
+            <span class="panel-kicker">Panneau 02</span>
+            <h2 class="panel-title">Forêt lointaine</h2>
+            <p class="panel-text">Ce panneau arrive par le bas, se cale au centre, puis reste à sa place pendant la suite du scroll.</p>
+          </div>
+        </article>
+      </section>
+
+      <section class="panel-section">
+        <article class="panel">
+          <div class="panel-bg" style="background: linear-gradient(135deg, #111, #77411a 48%, #170b04);"></div>
+          <div class="torii silhouette"></div>
+          <div class="panel-content">
+            <span class="panel-kicker">Panneau 03</span>
+            <h2 class="panel-title">Décor principal</h2>
+            <p class="panel-text">Le principe peut ensuite être remplacé par tes vrais assets : torii, dragon, vagues, brume, papier déchiré, etc.</p>
+          </div>
+        </article>
+      </section>
+
+      <section class="panel-section">
+        <article class="panel">
+          <div class="panel-bg" style="background: linear-gradient(135deg, #08110b, #2a4a31 48%, #050604);"></div>
+          <div class="bamboo silhouette"></div>
+          <div class="panel-content">
+            <span class="panel-kicker">Panneau 04</span>
+            <h2 class="panel-title">Premier plan</h2>
+            <p class="panel-text">Dernier panneau de la pile. Il reste bloqué dans sa position finale avant la sortie vers la suite du site.</p>
+          </div>
+        </article>
+      </section>
+    </div>
+
+    <section class="outro">
+      <h2>Suite du portfolio</h2>
+    </section>
+  </main>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/ScrollTrigger.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="https://unpkg.com/lenis@1.3.17/dist/lenis.min.js"></script>
+
+  <script>
+    gsap.registerPlugin(ScrollTrigger);
+
+    const lenis = new Lenis({
+      lerp: 0.08,
+      smoothWheel: true
+    });
+
+    lenis.on("scroll", ScrollTrigger.update);
+
+    gsap.ticker.add((time) => {
+      lenis.raf(time * 1000);
+    });
+
+    gsap.ticker.lagSmoothing(0);
+
+    const sections = gsap.utils.toArray(".panel-section");
+
+    sections.forEach((section, index) => {
+      const panel = section.querySelector(".panel");
+      const bg = section.querySelector(".panel-bg");
+
+      gsap.set(section, {
+        zIndex: index + 1
+      });
+
+      if (index === 0) {
+        gsap.set(panel, {
+          yPercent: 0,
+          z: 0,
+          rotationX: 0,
+          scale: 1
+        });
+      } else {
+        gsap.set(panel, {
+          yPercent: 120,
+          z: -500,
+          rotationX: -35,
+          scale: 0.94
+        });
+      }
+
+      ScrollTrigger.create({
+        trigger: section,
+        start: "top top",
+        end: "bottom top",
+        pin: true,
+        pinSpacing: false
+      });
+
+      if (index > 0) {
+        gsap.to(panel, {
+          yPercent: 0,
+          z: 0,
+          rotationX: 0,
+          scale: 1,
+          ease: "none",
+          scrollTrigger: {
+            trigger: section,
+            start: "top bottom",
+            end: "top top",
+            scrub: true
+          }
+        });
+      }
+
+      gsap.to(bg, {
+        scale: 1,
+        ease: "none",
+        scrollTrigger: {
+          trigger: section,
+          start: "top bottom",
+          end: "bottom top",
+          scrub: true
+        }
+      });
+    });
+  </script>
+</body>
+</html>
