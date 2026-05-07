@@ -1,527 +1,379 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>L'Encre Vivante — Portfolio</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Shippori+Mincho:wght@400;500&display=swap" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Portfolio — Théâtre japonais</title>
 
-  <link rel="preload" href="sun.png"          as="image">
-  <link rel="preload" href="clouds-left.png"  as="image">
-  <link rel="preload" href="clouds-right.png" as="image">
-  <link rel="preload" href="pagoda.png"       as="image">
+  <link rel="preload" href="assets/paper-texture.png" as="image">
+  <link rel="preload" href="assets/sun.png" as="image">
+  <link rel="preload" href="assets/clouds-left.png" as="image">
+  <link rel="preload" href="assets/clouds-right.png" as="image">
+  <link rel="preload" href="assets/grass.png" as="image">
+  <link rel="preload" href="assets/pagoda.png" as="image">
+  <link rel="preload" href="assets/crane.png" as="image">
+  <link rel="preload" href="assets/leaf-1.png" as="image">
+  <link rel="preload" href="assets/leaf-2.png" as="image">
+  <link rel="preload" href="assets/leaf-3.png" as="image">
+  <link rel="preload" href="assets/leaf-4.png" as="image">
 
   <style>
     *, *::before, *::after {
+      box-sizing: border-box;
       margin: 0;
       padding: 0;
-      box-sizing: border-box;
     }
 
-    html { scroll-behavior: auto; }
+    html {
+      background: #ead8af;
+      scroll-behavior: auto;
+    }
 
     body {
-      background: #0e0702;
-      color: #e4ccaa;
-      font-family: 'Shippori Mincho', serif;
-      overflow-x: hidden;
-      -webkit-font-smoothing: antialiased;
-    }
-
-    /* ─── Texture papier — overlay fixe ─────────────────────────────────────
-       mix-blend-mode: multiply → s'imprime sur le fond chaud.
-       Sur fond sombre = invisible (c'est voulu pour l'intro/outro).
-       Sur fond ambré du stage = grain papier visible.
-       NOTE PROD : convertir paper-texture.png en WebP ≤ 400 Ko.
-    ─────────────────────────────────────────────────────────────────────── */
-    #paper-overlay {
-      position: fixed;
-      inset: 0;
-      background-image: url('paper-texture.png');
-      background-size: cover;
-      background-repeat: no-repeat;
-      background-position: center;
-      mix-blend-mode: multiply;
-      opacity: 0.28;
-      pointer-events: none;
-      z-index: 500;
-    }
-
-    /* ─── Intro ──────────────────────────────────────────────────────────── */
-    .intro {
-      position: relative;
       min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      text-align: center;
-      padding: 2rem;
-      background: #0e0702;
-      /* Lueur chaude en bas — transition visuelle vers le stage */
-      background-image: radial-gradient(
-        ellipse 75% 40% at 50% 100%,
-        rgba(180, 68, 10, 0.28),
-        transparent 70%
-      );
+      overflow-x: hidden;
+      background: #ead8af;
+      font-family: Georgia, 'Times New Roman', serif;
     }
 
-    .intro-eyebrow {
-      font-size: 0.65rem;
-      font-weight: 400;
-      letter-spacing: 0.4em;
-      text-transform: uppercase;
-      color: rgba(228, 204, 170, 0.35);
-      margin-bottom: 1.8rem;
-    }
-
-    .intro h1 {
-      font-family: 'Cinzel Decorative', serif;
-      font-size: clamp(2.4rem, 7.5vw, 6.5rem);
-      line-height: 1.08;
-      letter-spacing: 0.05em;
-      color: #e4ccaa;
-      max-width: 860px;
-    }
-
-    .intro-sub {
-      margin-top: 2rem;
-      font-size: clamp(0.88rem, 1.4vw, 1.05rem);
-      color: rgba(228, 204, 170, 0.42);
-      line-height: 1.75;
-      max-width: 440px;
-      font-weight: 400;
-    }
-
-    .scroll-cue {
-      margin-top: 4.5rem;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 0.75rem;
-      color: rgba(228, 204, 170, 0.25);
-      font-size: 0.6rem;
-      letter-spacing: 0.3em;
-      text-transform: uppercase;
-    }
-
-    .scroll-cue-line {
-      width: 1px;
-      height: 90px;
-      background: rgba(228, 204, 170, 0.12);
-      position: relative;
-      overflow: hidden;
-    }
-
-    .scroll-cue-line::after {
-      content: '';
-      position: absolute;
-      top: -100%;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(to bottom, transparent, rgba(228, 204, 170, 0.45), transparent);
-      animation: cue 2.2s ease-in-out infinite;
-    }
-
-    @keyframes cue { to { top: 100%; } }
-
-    /* ─── Stage ──────────────────────────────────────────────────────────────
-       Fond : gradient radial chaud — simule un écran de papier de riz
-       rétro-éclairé par une source lumineuse orange-ambrée.
-       Bord extérieur sombre → centre lumineux → effet lanterne.
-    ─────────────────────────────────────────────────────────────────────── */
-    #stage {
+    .scroll-scene {
       position: relative;
       width: 100%;
       height: 100vh;
       overflow: hidden;
-
-      /* Couleur de base : ton rouille profond */
-      background-color: #1a0804;
-
-      /* Gradient principal : glow ambré centré vers le bas */
-      background-image:
-        /* Lueur chaude concentrée là où le soleil apparaîtra */
-        radial-gradient(
-          ellipse 60% 55% at 50% 30%,
-          rgba(220, 110, 18, 0.55),
-          transparent 75%
-        ),
-        /* Fond global : papier de riz rétro-éclairé */
-        radial-gradient(
-          ellipse 140% 110% at 50% 60%,
-          #c25210 0%,
-          #7e2a08 22%,
-          #3d1205 48%,
-          #180702 72%,
-          #0a0401 100%
-        );
+      background-image: url('assets/paper-texture.png');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      isolation: isolate;
     }
 
-    /* ─── Vignette de scène ──────────────────────────────────────────────────
-       Masque les bords pour encadrer la composition comme un proscenium.
-       Garantit aussi la lisibilité des captions sur le fond chaud.
-       z-index 80 : au-dessus des calques d'assets, sous les captions (100).
-    ─────────────────────────────────────────────────────────────────────── */
-    #stage::after {
+    .scroll-scene::after {
       content: '';
       position: absolute;
       inset: 0;
-      background:
-        /* Fondu bas → obscurcit la zone des captions */
-        linear-gradient(to top, rgba(8, 3, 1, 0.72) 0%, transparent 38%),
-        /* Vignette latérale + haut */
-        radial-gradient(ellipse 80% 72% at 50% 42%, transparent 38%, rgba(8, 3, 1, 0.68) 100%);
-      z-index: 80;
       pointer-events: none;
+      z-index: 100;
+      background:
+        radial-gradient(ellipse 78% 70% at 50% 42%, transparent 56%, rgba(40, 18, 4, 0.12) 100%),
+        linear-gradient(to bottom, rgba(255, 246, 220, 0.18), transparent 26%, transparent 74%, rgba(71, 34, 8, 0.14));
+      mix-blend-mode: multiply;
     }
 
-    /* ─── Calques ─────────────────────────────────────────────────────────── */
     .layer {
       position: absolute;
       inset: 0;
       pointer-events: none;
-      will-change: transform, opacity;
-      /* Les calques passent au-dessus du fond, sous la vignette */
-      z-index: 10;
+      will-change: transform, opacity, clip-path;
     }
 
-    .layer img {
+    .layer img,
+    .leaf {
       position: absolute;
       display: block;
       user-select: none;
       -webkit-user-drag: none;
+      will-change: transform, opacity, clip-path;
     }
 
-    /* L1 – Soleil */
-    #l-sun img {
-      width: clamp(160px, 24vw, 340px);
-      top: 7%;
+    #sun-layer { z-index: 10; }
+    #clouds-left-layer,
+    #clouds-right-layer { z-index: 20; }
+    #pagoda-layer { z-index: 40; }
+    #crane-layer { z-index: 50; }
+    #grass-layer { z-index: 70; }
+    #leaves-layer { z-index: 90; }
+
+    #sun {
+      width: clamp(125px, 14vw, 210px);
       left: 50%;
+      top: 12vh;
       transform: translateX(-50%);
     }
 
-    /* L2 – Nuages */
-    #l-clouds-l img {
-      width: clamp(300px, 58vw, 780px);
-      top: 0;
-      left: -2%;
+    #clouds-left {
+      width: clamp(190px, 25vw, 360px);
+      left: 23vw;
+      top: 30vh;
     }
 
-    #l-clouds-r img {
-      width: clamp(300px, 58vw, 780px);
-      top: 0;
-      right: -2%;
+    #clouds-right {
+      width: clamp(190px, 25vw, 360px);
+      right: 22vw;
+      top: 31vh;
     }
 
-    /* L3 – Pagode */
-    #l-pagoda img {
-      width: clamp(200px, 30vw, 440px);
-      bottom: 0;
+    #grass {
+      width: min(1100px, 100vw);
       left: 50%;
+      bottom: -1vh;
       transform: translateX(-50%);
     }
 
-    /* L4 – Grue */
-    #l-crane img {
-      width: clamp(140px, 20vw, 280px);
-      top: 22%;
-      right: 13%;
+    #pagoda {
+      width: clamp(170px, 21vw, 330px);
+      left: 50%;
+      bottom: 4vh;
+      transform: translateX(-50%);
     }
 
-    /* L5 – Feuilles flottantes
-       NOTE PROD : convertir floating-leaves.png en WebP ≤ 400 Ko. */
-    #l-leaves img {
-      width: 100%;
-      bottom: 0;
-      left: 0;
+    #crane {
+      width: clamp(92px, 13vw, 185px);
+      left: 31vw;
+      top: 55vh;
     }
 
-    /* ─── États initiaux : tous invisibles ───────────────────────────────── */
-    #l-sun      { opacity: 0; }
-    #l-clouds-l { opacity: 0; }
-    #l-clouds-r { opacity: 0; }
-    #l-pagoda   { opacity: 0; }
-    #l-crane    { opacity: 0; }
-    #l-leaves   { opacity: 0; }
-
-    /* ─── Captions ───────────────────────────────────────────────────────── */
-    .caption {
-      position: absolute;
-      z-index: 100;
+    .leaf {
+      width: clamp(28px, 4.4vw, 58px);
       opacity: 0;
-      will-change: opacity, transform;
-      pointer-events: none;
     }
 
-    .caption::before {
-      content: '';
-      position: absolute;
-      left: -1.4rem;
-      top: 0.2em;
-      height: 100%;
-      width: 1px;
-      background: rgba(228, 204, 170, 0.22);
-    }
+    #leaf-1 { left: 41vw; bottom: 5vh; }
+    #leaf-2 { left: 48vw; bottom: 2vh; width: clamp(22px, 3.6vw, 46px); }
+    #leaf-3 { left: 55vw; bottom: 7vh; width: clamp(26px, 4vw, 52px); }
+    #leaf-4 { left: 61vw; bottom: 3vh; width: clamp(20px, 3.2vw, 42px); }
 
-    .caption-eyebrow {
-      font-size: 0.6rem;
-      letter-spacing: 0.32em;
-      text-transform: uppercase;
-      color: rgba(228, 204, 170, 0.5);
-      margin-bottom: 0.7rem;
-      font-weight: 400;
-    }
-
-    .caption-title {
-      font-family: 'Cinzel Decorative', serif;
-      font-size: clamp(1.4rem, 3.2vw, 2.8rem);
-      line-height: 1.12;
-      color: #e4ccaa;
-      font-weight: 400;
-    }
-
-    .caption-body {
-      margin-top: 1rem;
-      font-size: clamp(0.82rem, 1.1vw, 0.96rem);
-      color: rgba(228, 204, 170, 0.55);
-      line-height: 1.8;
-      max-width: 300px;
-      font-weight: 400;
-    }
-
-    #cap-1 { bottom: 13%; left: 7%; transform: translateY(18px); }
-    #cap-2 { bottom: 13%; left: 7%; transform: translateY(18px); }
-
-    #cap-3 {
-      top: 38%;
-      right: 7%;
-      text-align: right;
-      transform: translateY(18px);
-    }
-    #cap-3::before { left: auto; right: -1.4rem; }
-    #cap-3 .caption-body { margin-left: auto; }
-
-    #cap-4 { bottom: 13%; left: 7%; transform: translateY(18px); }
-
-    /* ─── Outro ──────────────────────────────────────────────────────────── */
-    .outro {
-      min-height: 100vh;
+    .scroll-cue {
+      position: fixed;
+      left: 50%;
+      bottom: 7vh;
+      z-index: 200;
+      transform: translateX(-50%);
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
-      text-align: center;
-      padding: 2rem;
-      background: #0a0401;
-      background-image: radial-gradient(
-        ellipse 55% 35% at 50% 100%,
-        rgba(130, 50, 8, 0.18),
-        transparent 70%
-      );
-    }
-
-    .outro-eyebrow {
-      font-size: 0.6rem;
-      letter-spacing: 0.35em;
+      gap: 0.6rem;
+      color: rgba(20, 12, 4, 0.7);
+      font-size: clamp(0.72rem, 1.1vw, 0.9rem);
+      letter-spacing: 0.28em;
       text-transform: uppercase;
-      color: rgba(228, 204, 170, 0.25);
-      margin-bottom: 1.5rem;
+      pointer-events: none;
+      will-change: opacity, transform;
     }
 
-    .outro h2 {
-      font-family: 'Cinzel Decorative', serif;
-      font-size: clamp(2rem, 5.5vw, 5rem);
-      letter-spacing: 0.06em;
-      color: rgba(228, 204, 170, 0.7);
-      font-weight: 400;
+    .scroll-arrow {
+      width: 18px;
+      height: 18px;
+      border-right: 1.5px solid currentColor;
+      border-bottom: 1.5px solid currentColor;
+      transform: rotate(45deg);
+      animation: arrow-bounce 1.45s ease-in-out infinite;
+    }
+
+    @keyframes arrow-bounce {
+      0%, 100% { transform: translateY(0) rotate(45deg); opacity: 0.35; }
+      50% { transform: translateY(8px) rotate(45deg); opacity: 0.95; }
+    }
+
+    @media (max-width: 768px) {
+      #sun { top: 13vh; }
+      #clouds-left { left: 5vw; top: 30vh; }
+      #clouds-right { right: 4vw; top: 32vh; }
+      #pagoda { width: clamp(150px, 38vw, 230px); bottom: 5vh; }
+      #crane { left: 18vw; top: 56vh; }
+      #grass { width: 135vw; }
     }
 
     @media (prefers-reduced-motion: reduce) {
-      .scroll-cue-line::after { animation: none; opacity: 0.5; top: 50%; }
+      .scroll-arrow { animation: none; }
     }
   </style>
 </head>
 <body>
+  <main id="theatre">
+    <section class="scroll-scene" aria-label="Composition théâtrale japonaise animée au scroll">
+      <div class="layer" id="sun-layer" aria-hidden="true">
+        <img id="sun" src="assets/sun.png" alt="">
+      </div>
 
-  <div id="paper-overlay" aria-hidden="true"></div>
+      <div class="layer" id="clouds-left-layer" aria-hidden="true">
+        <img id="clouds-left" src="assets/clouds-left.png" alt="">
+      </div>
 
-  <section class="intro" aria-labelledby="intro-title">
-    <p class="intro-eyebrow" aria-hidden="true">L'encre vivante</p>
-    <h1 id="intro-title">Théâtre<br>d'ombres</h1>
-    <p class="intro-sub">
-      Une scène en papier découpé. Chaque couche révèle un peu plus du monde.
-    </p>
-    <div class="scroll-cue" aria-hidden="true">
+      <div class="layer" id="clouds-right-layer" aria-hidden="true">
+        <img id="clouds-right" src="assets/clouds-right.png" alt="">
+      </div>
+
+      <div class="layer" id="grass-layer" aria-hidden="true">
+        <img id="grass" src="assets/grass.png" alt="">
+      </div>
+
+      <div class="layer" id="pagoda-layer" aria-hidden="true">
+        <img id="pagoda" src="assets/pagoda.png" alt="">
+      </div>
+
+      <div class="layer" id="crane-layer" aria-hidden="true">
+        <img id="crane" src="assets/crane.png" alt="">
+      </div>
+
+      <div class="layer" id="leaves-layer" aria-hidden="true">
+        <img class="leaf" id="leaf-1" src="assets/leaf-1.png" alt="">
+        <img class="leaf" id="leaf-2" src="assets/leaf-2.png" alt="">
+        <img class="leaf" id="leaf-3" src="assets/leaf-3.png" alt="">
+        <img class="leaf" id="leaf-4" src="assets/leaf-4.png" alt="">
+      </div>
+    </section>
+
+    <div class="scroll-cue" id="scroll-cue" aria-hidden="true">
       <span>scroll</span>
-      <div class="scroll-cue-line"></div>
+      <span class="scroll-arrow"></span>
     </div>
-  </section>
-
-  <section id="stage" aria-label="Théâtre d'ombres, composition en couches">
-
-    <div class="layer" id="l-sun" aria-hidden="true">
-      <img src="sun.png" alt="">
-    </div>
-
-    <div class="layer" id="l-clouds-l" aria-hidden="true">
-      <img src="clouds-left.png" alt="">
-    </div>
-    <div class="layer" id="l-clouds-r" aria-hidden="true">
-      <img src="clouds-right.png" alt="">
-    </div>
-
-    <div class="layer" id="l-pagoda" aria-hidden="true">
-      <img src="pagoda.png" alt="">
-    </div>
-
-    <div class="layer" id="l-crane" aria-hidden="true">
-      <img src="crane.png" alt="">
-    </div>
-
-    <div class="layer" id="l-leaves" aria-hidden="true">
-      <img src="floating-leaves.png" alt="">
-    </div>
-
-    <div class="caption" id="cap-1" role="region" aria-label="Phase 1">
-      <p class="caption-eyebrow">01 — Ciel</p>
-      <h2 class="caption-title">L'aube<br>se lève</h2>
-      <p class="caption-body">Le soleil perce la brume. Un monde s'éveille dans les silhouettes du papier découpé.</p>
-    </div>
-
-    <div class="caption" id="cap-2" role="region" aria-label="Phase 2">
-      <p class="caption-eyebrow">02 — Architecture</p>
-      <h2 class="caption-title">La pagode<br>silencieuse</h2>
-      <p class="caption-body">Ancrée dans la plaine, elle veille. Les nuages glissent à sa droite depuis des siècles.</p>
-    </div>
-
-    <div class="caption" id="cap-3" role="region" aria-label="Phase 3">
-      <p class="caption-eyebrow">03 — Présence</p>
-      <h2 class="caption-title">La grue<br>passe</h2>
-      <p class="caption-body">Un seul mouvement. Une grâce que le papier retient sans jamais la figer.</p>
-    </div>
-
-    <div class="caption" id="cap-4" role="region" aria-label="Phase 4">
-      <p class="caption-eyebrow">04 — Profondeur</p>
-      <h2 class="caption-title">La scène<br>complète</h2>
-      <p class="caption-body">Toutes les couches sont là. L'ombre est une. La profondeur est réelle.</p>
-    </div>
-
-  </section>
-
-  <section class="outro" aria-labelledby="outro-title">
-    <p class="outro-eyebrow">Portfolio</p>
-    <h2 id="outro-title">L'encre vivante</h2>
-  </section>
+  </main>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/ScrollTrigger.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-  <script src="https://unpkg.com/lenis@1.3.17/dist/lenis.min.js"></script>
 
   <script>
     gsap.registerPlugin(ScrollTrigger)
 
-    const lenis = new Lenis({ lerp: 0.085, smoothWheel: true })
-    lenis.on('scroll', ScrollTrigger.update)
-    gsap.ticker.add(t => lenis.raf(t * 1000))
-    gsap.ticker.lagSmoothing(0)
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    const isMobile = window.matchMedia('(max-width: 768px)').matches
+    const scrollCue = document.querySelector('#scroll-cue')
 
-    const mobile = window.matchMedia('(max-width: 768px)').matches
-    const px = v => mobile ? v * 0.5 : v
+    let wheelCount = 0
+    const hideScrollCue = () => {
+      gsap.to(scrollCue, {
+        opacity: 0,
+        y: 18,
+        duration: 0.45,
+        ease: 'power2.out',
+        pointerEvents: 'none'
+      })
+    }
 
-    const tl = gsap.timeline({
-      defaults: { ease: 'none' },
-      scrollTrigger: {
-        trigger: '#stage',
-        pin: true,
-        pinSpacing: true,
-        scrub: 1.2,
+    window.addEventListener('wheel', () => {
+      wheelCount += 1
+      if (wheelCount >= 2) hideScrollCue()
+    }, { passive: true })
+
+    window.addEventListener('touchmove', hideScrollCue, { passive: true })
+
+    if (prefersReducedMotion) {
+      gsap.set(['#sun-layer', '#clouds-left-layer', '#clouds-right-layer', '#grass-layer', '#crane-layer'], { opacity: 1, x: 0, y: 0 })
+      gsap.set('#pagoda-layer', { opacity: 1, clipPath: 'inset(0% 0% 0% 0%)' })
+      gsap.set('.leaf', { opacity: 1, y: 0, rotation: 0 })
+      gsap.set(scrollCue, { opacity: 0 })
+    } else {
+      gsap.set('#sun-layer', { opacity: 0, y: '105vh' })
+      gsap.set('#clouds-left-layer', { opacity: 0, x: '-65vw' })
+      gsap.set('#clouds-right-layer', { opacity: 0, x: '65vw' })
+      gsap.set('#grass-layer', { opacity: 0, y: '105vh' })
+      gsap.set('#pagoda-layer', { opacity: 1, clipPath: 'inset(100% 0% 0% 0%)' })
+      gsap.set('#crane-layer', { opacity: 0, x: '-70vw' })
+      gsap.set('.leaf', { opacity: 0, y: '35vh', rotation: -18 })
+
+      const tl = gsap.timeline({
+        defaults: { ease: 'power2.out' },
+        scrollTrigger: {
+          trigger: '.scroll-scene',
+          start: 'top top',
+          end: '+=620%',
+          pin: true,
+          pinSpacing: true,
+          scrub: 1.15,
+          anticipatePin: 1
+        }
+      })
+
+      tl.to(scrollCue, { opacity: 0, y: 18, duration: 0.25, ease: 'power1.out' }, 0.08)
+
+      tl.to('#sun-layer', {
+        opacity: 1,
+        y: isMobile ? '-3vh' : '-7vh',
+        duration: 1.15
+      }, 0.15)
+
+      tl.to('#clouds-left-layer', {
+        opacity: 1,
+        x: 0,
+        duration: 1.05
+      }, 1.25)
+
+      tl.to('#clouds-right-layer', {
+        opacity: 1,
+        x: 0,
+        duration: 1.05
+      }, 1.45)
+
+      tl.to('#sun-layer', {
+        y: isMobile ? '-5vh' : '-10vh',
+        duration: 1.1,
+        ease: 'none'
+      }, 1.25)
+
+      tl.to('#grass-layer', {
+        opacity: 1,
+        y: 0,
+        duration: 1.1
+      }, 2.55)
+
+      tl.to('#pagoda-layer', {
+        clipPath: 'inset(0% 0% 0% 0%)',
+        duration: 1.25,
+        ease: 'power2.inOut'
+      }, 3.65)
+
+      tl.to('#crane-layer', {
+        opacity: 1,
+        x: 0,
+        duration: 1.05
+      }, 4.9)
+
+      tl.to('#crane-layer', {
+        x: isMobile ? '7vw' : '10vw',
+        y: isMobile ? '-4vh' : '-6vh',
+        duration: 1.4,
+        ease: 'none'
+      }, 5.8)
+
+      tl.to('#leaf-1', {
+        opacity: 1,
+        y: '-58vh',
+        x: '-7vw',
+        rotation: 36,
+        duration: 1.2,
+        ease: 'sine.out'
+      }, 6.05)
+
+      tl.to('#leaf-2', {
+        opacity: 1,
+        y: '-67vh',
+        x: '4vw',
+        rotation: -32,
+        duration: 1.25,
+        ease: 'sine.out'
+      }, 6.35)
+
+      tl.to('#leaf-3', {
+        opacity: 1,
+        y: '-60vh',
+        x: '9vw',
+        rotation: 42,
+        duration: 1.25,
+        ease: 'sine.out'
+      }, 6.65)
+
+      tl.to('#leaf-4', {
+        opacity: 1,
+        y: '-72vh',
+        x: '-2vw',
+        rotation: -48,
+        duration: 1.3,
+        ease: 'sine.out'
+      }, 6.95)
+
+      tl.to({}, { duration: 0.7 })
+
+      ScrollTrigger.create({
+        trigger: '.scroll-scene',
         start: 'top top',
-        end: '+=500%',
-        anticipatePin: 1
-      }
-    })
-
-    function fadeIn(target, at, opts = {}) {
-      tl.fromTo(target,
-        { opacity: 0, y: opts.y ?? 28 },
-        { opacity: 1, y: 0, duration: opts.dur ?? 1, ease: 'power2.out', ...opts },
-        at
-      )
-    }
-
-    function capOut(target, at) {
-      tl.to(target, { opacity: 0, y: -14, duration: 0.45, ease: 'power1.in' }, at)
-    }
-
-    /* Phase 1 (t 0 → 1.6) — Ciel */
-    fadeIn('#l-sun',      0,    { dur: 1.2, y: 20 })
-    fadeIn('#l-clouds-l', 0.3,  { dur: 1,   y: 0 })
-    fadeIn('#l-clouds-r', 0.45, { dur: 1,   y: 0 })
-    tl.fromTo('#cap-1', { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out' }, 0.9)
-
-    /* Phase 2 (t 1.6 → 3.2) — Pagode */
-    capOut('#cap-1', 1.6)
-    fadeIn('#l-pagoda', 2.0, { dur: 1.1, y: 35 })
-    tl.fromTo('#cap-2', { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out' }, 2.5)
-    tl.to('#l-sun',      { y: px(-38), duration: 1.6 }, 1.6)
-    tl.to('#l-clouds-l', { x: px(-28), duration: 1.6 }, 1.6)
-    tl.to('#l-clouds-r', { x: px( 28), duration: 1.6 }, 1.6)
-
-    /* Phase 3 (t 3.2 → 4.2) — Grue */
-    capOut('#cap-2', 3.2)
-    fadeIn('#l-crane', 3.4, { dur: 0.8, y: 16 })
-    tl.fromTo('#cap-3', { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: 0.55, ease: 'power2.out' }, 3.7)
-    tl.to('#l-pagoda',   { y: px(-22), duration: 1 }, 3.2)
-    tl.to('#l-sun',      { y: px(-56), duration: 1 }, 3.2)
-    tl.to('#l-clouds-l', { x: px(-42), duration: 1 }, 3.2)
-    tl.to('#l-clouds-r', { x: px( 42), duration: 1 }, 3.2)
-
-    /* Phase 4 (t 4.2 → 5.0) — Scène complète */
-    capOut('#cap-3', 4.2)
-    tl.fromTo('#l-leaves', { opacity: 0 }, { opacity: 1, duration: 1.2, ease: 'power2.out' }, 4.2)
-    tl.fromTo('#cap-4', { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: 0.55, ease: 'power2.out' }, 4.6)
-    tl.to('#l-sun',      { y: px(-72), duration: 0.8 }, 4.2)
-    tl.to('#l-clouds-l', { x: px(-54), duration: 0.8 }, 4.2)
-    tl.to('#l-clouds-r', { x: px( 54), duration: 0.8 }, 4.2)
-    tl.to('#l-pagoda',   { y: px(-38), duration: 0.8 }, 4.2)
-    tl.to('#l-crane',    { y: px(-18), duration: 0.8 }, 4.2)
-
-    /* Ambient post-scroll */
-    ScrollTrigger.create({
-      trigger: '#stage',
-      start: 'top top',
-      end: '+=500%',
-      onLeave: startAmbient,
-      onEnterBack: stopAmbient
-    })
-
-    let ambientActive = false
-    const ambientTweens = []
-
-    function startAmbient() {
-      if (ambientActive) return
-      ambientActive = true
-      ambientTweens.push(
-        gsap.to('#l-crane img',    { y: -8,  duration: 5,  ease: 'sine.inOut', yoyo: true, repeat: -1 }),
-        gsap.to('#l-clouds-l img', { x: -12, duration: 9,  ease: 'sine.inOut', yoyo: true, repeat: -1, delay: 1 }),
-        gsap.to('#l-clouds-r img', { x:  12, duration: 11, ease: 'sine.inOut', yoyo: true, repeat: -1, delay: 2 }),
-        gsap.to('#l-leaves img',   { x: 10, y: -5, duration: 8, ease: 'sine.inOut', yoyo: true, repeat: -1, delay: 0.5 })
-      )
-    }
-
-    function stopAmbient() {
-      if (!ambientActive) return
-      ambientActive = false
-      ambientTweens.forEach(t => t.kill())
-      ambientTweens.length = 0
-    }
-
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      gsap.set(['#l-sun','#l-clouds-l','#l-clouds-r','#l-pagoda','#l-crane','#l-leaves'], { opacity: 1 })
+        end: '+=620%',
+        onLeave: () => {
+          gsap.to('#clouds-left', { x: -10, duration: 6, yoyo: true, repeat: -1, ease: 'sine.inOut' })
+          gsap.to('#clouds-right', { x: 10, duration: 7, yoyo: true, repeat: -1, ease: 'sine.inOut' })
+          gsap.to('#crane', { y: -8, duration: 4.5, yoyo: true, repeat: -1, ease: 'sine.inOut' })
+        }
+      })
     }
   </script>
 </body>
