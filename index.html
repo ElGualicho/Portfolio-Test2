@@ -16,6 +16,7 @@
   <link rel="preload" href="assets/leaf-2.png" as="image">
   <link rel="preload" href="assets/leaf-3.png" as="image">
   <link rel="preload" href="assets/leaf-4.png" as="image">
+  <link rel="preload" href="assets/pagoda-fight.png" as="image">
 
   <style>
     *, *::before, *::after {
@@ -60,21 +61,18 @@
       mix-blend-mode: multiply;
     }
 
-    /* Échelle intermédiaire : plus grande qu'un bloc central,
-       mais moins zoomée que la version précédente. */
     .composition {
-  position: absolute;
-  left: 50%;
-  top: 54%;
-  width: max(120vw, 170vh);
-  aspect-ratio: 16 / 9;
-  transform: translate(-50%, -50%);
-  overflow: visible;
-  z-index: 1;
-
-  perspective: 1200px;
-  transform-style: preserve-3d;
-}
+      position: absolute;
+      left: 50%;
+      top: 54%;
+      width: max(120vw, 170vh);
+      aspect-ratio: 16 / 9;
+      transform: translate(-50%, -50%);
+      overflow: visible;
+      z-index: 1;
+      perspective: 1200px;
+      transform-style: preserve-3d;
+    }
 
     .layer {
       position: absolute;
@@ -99,6 +97,7 @@
     #crane-layer { z-index: 55; }
     #grass-layer { z-index: 70; }
     #leaves-layer { z-index: 90; }
+    #balcony-layer { z-index: 120; }
 
     #sun {
       width: 30%;
@@ -127,12 +126,20 @@
     }
 
     #pagoda {
-  width: 33%;
-  left: 50%;
-  bottom: 17%;
-  transform: translateX(-50%);
-  transform-origin: bottom center;
-}
+      width: 33%;
+      left: 50%;
+      bottom: 17%;
+      transform: translateX(-50%);
+      transform-origin: bottom center;
+    }
+
+    #pagoda-balcony {
+      width: 112%;
+      left: 50%;
+      bottom: -6%;
+      transform: translateX(-50%);
+      transform-origin: center center;
+    }
 
     #crane {
       width: 17%;
@@ -194,6 +201,7 @@
       #grass { width: 108%; bottom: -8%; }
       #pagoda { width: 34%; bottom: -13%; }
       #crane { width: 24%; left: 10%; top: 42%; }
+      #pagoda-balcony { width: 142%; bottom: -5%; }
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -235,6 +243,10 @@
           <img class="leaf" id="leaf-3" src="assets/leaf-3.png" alt="">
           <img class="leaf" id="leaf-4" src="assets/leaf-4.png" alt="">
         </div>
+
+        <div class="layer" id="balcony-layer">
+          <img id="pagoda-balcony" src="assets/pagoda-fight.png" alt="">
+        </div>
       </div>
     </section>
 
@@ -274,6 +286,7 @@
 
     if (prefersReducedMotion) {
       gsap.set(['#sun-layer', '#clouds-left-layer', '#clouds-right-layer', '#grass-layer', '#crane-layer'], { opacity: 1, x: 0, y: 0 })
+      gsap.set('#balcony-layer', { opacity: 1, scale: 1, y: 0 })
       gsap.set('#pagoda-layer', { opacity: 1, clipPath: 'inset(0% 0% 0% 0%)' })
       gsap.set('.leaf', { opacity: 1, y: 0, rotation: 0 })
       gsap.set(scrollCue, { opacity: 0 })
@@ -283,24 +296,25 @@
       gsap.set('#clouds-right-layer', { opacity: 0, x: '80vw' })
       gsap.set('#grass-layer', { opacity: 0, y: '105vh' })
       gsap.set('#pagoda', {
-  autoAlpha: 0,
-  xPercent: -50,
-  yPercent: 65,
-  rotationX: -35,
-  z: -20,
-  transformOrigin: 'bottom center',
-  transformPerspective: 1200,
-  force3D: true
-})
+        autoAlpha: 0,
+        xPercent: -50,
+        yPercent: 65,
+        rotationX: -35,
+        z: -20,
+        transformOrigin: 'bottom center',
+        transformPerspective: 1200,
+        force3D: true
+      })
       gsap.set('#crane-layer', { opacity: 0, x: '-80vw' })
       gsap.set('.leaf', { opacity: 0, y: '45vh', rotation: -18 })
+      gsap.set('#balcony-layer', { opacity: 0, y: '8vh', scale: 1.08 })
 
       const tl = gsap.timeline({
         defaults: { ease: 'power2.out' },
         scrollTrigger: {
           trigger: '.scroll-scene',
           start: 'top top',
-          end: '+=620%',
+          end: '+=780%',
           pin: true,
           pinSpacing: true,
           scrub: 1.15,
@@ -340,17 +354,15 @@
         duration: 1.1
       }, 2.55)
 
-      tl.set('#pagoda', {
-  autoAlpha: 1
-}, 3.65)
+      tl.set('#pagoda', { autoAlpha: 1 }, 3.65)
 
-tl.to('#pagoda', {
-  yPercent: 0,
-  rotationX: 0,
-  z: 0,
-  duration: 1.25,
-  ease: 'power2.out'
-}, 3.65)
+      tl.to('#pagoda', {
+        yPercent: 0,
+        rotationX: 0,
+        z: 0,
+        duration: 1.25,
+        ease: 'power2.out'
+      }, 3.65)
 
       tl.to('#crane-layer', {
         opacity: 1,
@@ -401,12 +413,39 @@ tl.to('#pagoda', {
         ease: 'sine.out'
       }, 6.95)
 
-      tl.to({}, { duration: 0.7 })
+      tl.to('.composition', {
+        scale: 1.55,
+        y: '12vh',
+        duration: 1.7,
+        ease: 'power2.inOut'
+      }, 7.25)
+
+      tl.to('#pagoda', {
+        autoAlpha: 0,
+        duration: 1.0,
+        ease: 'power2.inOut'
+      }, 7.55)
+
+      tl.to('#sun-layer, #clouds-left-layer, #clouds-right-layer, #grass-layer, #crane-layer, #leaves-layer', {
+        opacity: 0,
+        duration: 1.1,
+        ease: 'power2.inOut'
+      }, 7.7)
+
+      tl.to('#balcony-layer', {
+        opacity: 1,
+        y: 0,
+        scale: 1,
+        duration: 1.45,
+        ease: 'power2.out'
+      }, 7.95)
+
+      tl.to({}, { duration: 0.9 })
 
       ScrollTrigger.create({
         trigger: '.scroll-scene',
         start: 'top top',
-        end: '+=620%',
+        end: '+=780%',
         onLeave: () => {
           gsap.to('#clouds-left', { x: -10, duration: 6, yoyo: true, repeat: -1, ease: 'sine.inOut' })
           gsap.to('#clouds-right', { x: 10, duration: 7, yoyo: true, repeat: -1, ease: 'sine.inOut' })
