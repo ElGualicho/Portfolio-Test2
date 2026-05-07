@@ -63,15 +63,18 @@
     /* Échelle intermédiaire : plus grande qu'un bloc central,
        mais moins zoomée que la version précédente. */
     .composition {
-      position: absolute;
-      left: 50%;
-      top: 54%;
-      width: max(120vw, 170vh);
-      aspect-ratio: 16 / 9;
-      transform: translate( -50%, -50%);
-      overflow: visible;
-      z-index: 1;
-    }
+  position: absolute;
+  left: 50%;
+  top: 54%;
+  width: max(120vw, 170vh);
+  aspect-ratio: 16 / 9;
+  transform: translate(-50%, -50%);
+  overflow: visible;
+  z-index: 1;
+
+  perspective: 1200px;
+  transform-style: preserve-3d;
+}
 
     .layer {
       position: absolute;
@@ -124,11 +127,12 @@
     }
 
     #pagoda {
-      width: 33%;
-      left: 50%;
-      bottom: 17%;
-      transform: translateX(-50%);
-    }
+  width: 33%;
+  left: 50%;
+  bottom: 17%;
+  transform: translateX(-50%);
+  transform-origin: bottom center;
+}
 
     #crane {
       width: 17%;
@@ -142,9 +146,9 @@
     }
 
     #leaf-1 { left: 0%; bottom: 25%; width: 100%; }
-    #leaf-2 { left: 0%; bottom: 37%; width: 100%; }
-    #leaf-3 { left: 0%; bottom: 37%; width: 100%; }
-    #leaf-4 { left: 0%; bottom: 57%; width: 100%; }
+    #leaf-2 { left: 0%; bottom: 0%; width: 100%; }
+    #leaf-3 { left: 0%; bottom: 2%; width: 100%; }
+    #leaf-4 { left: 0%; bottom: -3%; width: 100%; }
 
     .scroll-cue {
       position: fixed;
@@ -278,7 +282,16 @@
       gsap.set('#clouds-left-layer', { opacity: 0, x: '-80vw' })
       gsap.set('#clouds-right-layer', { opacity: 0, x: '80vw' })
       gsap.set('#grass-layer', { opacity: 0, y: '105vh' })
-      gsap.set('#pagoda-layer', { opacity: 1, clipPath: 'inset(100% 0% 0% 0%)' })
+      gsap.set('#pagoda', {
+  autoAlpha: 0,
+  xPercent: -50,
+  yPercent: 65,
+  rotationX: -35,
+  z: -20,
+  transformOrigin: 'bottom center',
+  transformPerspective: 1200,
+  force3D: true
+})
       gsap.set('#crane-layer', { opacity: 0, x: '-80vw' })
       gsap.set('.leaf', { opacity: 0, y: '45vh', rotation: -18 })
 
@@ -327,11 +340,17 @@
         duration: 1.1
       }, 2.55)
 
-      tl.to('#pagoda-layer', {
-        clipPath: 'inset(0% 0% 0% 0%)',
-        duration: 1.25,
-        ease: 'power2.inOut'
-      }, 3.65)
+      tl.set('#pagoda', {
+  autoAlpha: 1
+}, 3.65)
+
+tl.to('#pagoda', {
+  yPercent: 0,
+  rotationX: 0,
+  z: 0,
+  duration: 1.25,
+  ease: 'power2.out'
+}, 3.65)
 
       tl.to('#crane-layer', {
         opacity: 1,
@@ -357,7 +376,7 @@
 
       tl.to('#leaf-2', {
         opacity: 1,
-        y: '-22vh',
+        y: '-100vh',
         x: '3vw',
         rotation: -32,
         duration: 1.25,
@@ -366,7 +385,7 @@
 
       tl.to('#leaf-3', {
         opacity: 1,
-        y: '-28vh',
+        y: '-100vh',
         x: '5vw',
         rotation: 42,
         duration: 1.25,
@@ -375,7 +394,7 @@
 
       tl.to('#leaf-4', {
         opacity: 1,
-        y: '-24vh',
+        y: '-100vh',
         x: '-2vw',
         rotation: -48,
         duration: 1.3,
