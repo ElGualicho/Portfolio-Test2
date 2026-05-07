@@ -1,35 +1,63 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Portfolio Test 2 - Panneaux empilés</title>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>L'Encre Vivante — Portfolio</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Shippori+Mincho:wght@400;500&display=swap" rel="stylesheet">
+
+  <!-- Préchargement des assets critiques -->
+  <link rel="preload" href="sun.png"          as="image">
+  <link rel="preload" href="clouds-left.png"  as="image">
+  <link rel="preload" href="clouds-right.png" as="image">
+  <link rel="preload" href="pagoda.png"       as="image">
 
   <style>
-    * {
+    /* ─── Reset ──────────────────────────────── */
+    *, *::before, *::after {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
     }
 
-    html,
+    html {
+      /* Lenis gère le scroll — on désactive le smooth natif */
+      scroll-behavior: auto;
+    }
+
     body {
-      width: 100%;
-      min-height: 100%;
+      background: #0b0703;
+      color: #e4ccaa;
+      font-family: 'Shippori Mincho', serif;
       overflow-x: hidden;
-      font-family: "Syne", sans-serif;
-      background: #120c05;
-      color: #fff;
+      /* Anticrénelage pour les polices serif légères */
+      -webkit-font-smoothing: antialiased;
     }
 
-    body {
-      min-height: 100vh;
+    /* ─── Texture papier — overlay fixe, permanent ────
+       NOTE PROD : remplacer paper-texture.png par une
+       version WebP ≤ 400 Ko avant déploiement.
+       Actuellement 5.6 Mo — chargement bloquant sur mobile.
+    ─────────────────────────────────────────────────── */
+    #paper-overlay {
+      position: fixed;
+      inset: 0;
+      background-image: url('paper-texture.png');
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-position: center;
+      mix-blend-mode: overlay;
+      opacity: 0.07;
+      pointer-events: none;
+      z-index: 500;
+      /* Sur mobile : on désactive la texture lourde */
     }
 
+    /* ─── Intro ──────────────────────────────── */
     .intro {
+      position: relative;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
@@ -37,425 +65,618 @@
       align-items: center;
       text-align: center;
       padding: 2rem;
-      background:
-        radial-gradient(circle at top, rgba(170, 77, 31, 0.45), transparent 42%),
-        #120c05;
+      background: #0b0703;
+      /* Gradient très doux vers le haut — impression de lumière lointaine */
+      background-image: radial-gradient(
+        ellipse 80% 50% at 50% 0%,
+        rgba(160, 80, 20, 0.18),
+        transparent 65%
+      );
+    }
+
+    .intro-eyebrow {
+      font-size: 0.65rem;
+      font-weight: 400;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: rgba(228, 204, 170, 0.35);
+      margin-bottom: 1.8rem;
     }
 
     .intro h1 {
-      max-width: 980px;
-      font-size: clamp(3rem, 9vw, 8rem);
-      line-height: 0.9;
-      letter-spacing: -0.07em;
-      text-transform: uppercase;
+      font-family: 'Cinzel Decorative', serif;
+      font-size: clamp(2.4rem, 7.5vw, 6.5rem);
+      line-height: 1.08;
+      letter-spacing: 0.05em;
+      color: #e4ccaa;
+      max-width: 860px;
     }
 
-    .intro p {
-      max-width: 680px;
-      margin-top: 1.5rem;
-      color: rgba(255, 255, 255, 0.68);
-      font-size: clamp(1rem, 2vw, 1.25rem);
-      line-height: 1.6;
+    .intro-sub {
+      margin-top: 2rem;
+      font-size: clamp(0.88rem, 1.4vw, 1.05rem);
+      color: rgba(228, 204, 170, 0.42);
+      line-height: 1.75;
+      max-width: 440px;
+      font-weight: 400;
     }
 
-    .scroll-indicator {
-      margin-top: 4rem;
-      width: 1px;
-      height: 120px;
-      background: rgba(255, 255, 255, 0.15);
-      position: relative;
-      overflow: hidden;
-    }
-
-    .scroll-indicator::before {
-      content: "";
-      position: absolute;
-      left: 0;
-      top: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(to bottom, transparent, #fff, transparent);
-      animation: scrollLine 1.8s ease-in-out infinite;
-    }
-
-    @keyframes scrollLine {
-      to {
-        top: 100%;
-      }
-    }
-
-    .stack-wrapper {
-      position: relative;
-      width: 100%;
-      background: #120c05;
-    }
-
-    .panel-section {
-      height: 100vh;
-      width: 100%;
-      position: relative;
+    .scroll-cue {
+      margin-top: 4.5rem;
       display: flex;
+      flex-direction: column;
       align-items: center;
-      justify-content: center;
-      perspective: 1200px;
-      transform-style: preserve-3d;
-      overflow: hidden;
+      gap: 0.75rem;
+      color: rgba(228, 204, 170, 0.25);
+      font-size: 0.6rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
     }
 
-    .panel {
+    .scroll-cue-line {
+      width: 1px;
+      height: 90px;
+      background: rgba(228, 204, 170, 0.12);
       position: relative;
-      width: min(92vw, 1180px);
-      height: min(76vh, 720px);
-      border-radius: 2rem;
       overflow: hidden;
-      transform-origin: center bottom;
-      box-shadow: 0 40px 100px rgba(0, 0, 0, 0.55);
-      background: #211306;
-      will-change: transform;
     }
 
-    .panel::before {
-      content: "";
+    .scroll-cue-line::after {
+      content: '';
       position: absolute;
-      inset: 0;
-      background:
-        linear-gradient(to top, rgba(0, 0, 0, 0.78), rgba(0, 0, 0, 0.08) 55%, rgba(255, 255, 255, 0.06)),
-        repeating-linear-gradient(90deg, rgba(255,255,255,0.035) 0 1px, transparent 1px 7px);
-      z-index: 3;
-      pointer-events: none;
-      mix-blend-mode: screen;
-      opacity: 0.55;
-    }
-
-    .panel-bg {
-      position: absolute;
-      inset: 0;
-      background-size: cover;
-      background-position: center;
-      transform: scale(1.08);
-      filter: contrast(1.05) saturate(0.85);
-    }
-
-    .panel-content {
-      position: absolute;
-      inset: auto 0 0 0;
-      z-index: 5;
-      padding: clamp(1.5rem, 4vw, 4rem);
-    }
-
-    .panel-kicker {
-      display: inline-block;
-      margin-bottom: 0.9rem;
-      color: rgba(255, 255, 255, 0.62);
-      font-size: 0.78rem;
-      font-weight: 700;
-      letter-spacing: 0.28em;
-      text-transform: uppercase;
-    }
-
-    .panel-title {
-      max-width: 820px;
-      font-size: clamp(2.3rem, 7vw, 6.8rem);
-      line-height: 0.88;
-      letter-spacing: -0.07em;
-      text-transform: uppercase;
-    }
-
-    .panel-text {
-      max-width: 620px;
-      margin-top: 1.2rem;
-      color: rgba(255, 255, 255, 0.72);
-      font-size: clamp(0.95rem, 1.6vw, 1.15rem);
-      line-height: 1.65;
-    }
-
-    .silhouette {
-      position: absolute;
-      z-index: 4;
-      pointer-events: none;
-      background: #050403;
-      filter: drop-shadow(0 12px 22px rgba(0, 0, 0, 0.35));
-    }
-
-    .sun {
-      width: 18vmin;
-      height: 18vmin;
-      border-radius: 50%;
-      right: 12%;
-      top: 14%;
-      background: rgba(255, 206, 115, 0.86);
-      z-index: 2;
-      filter: blur(0.5px);
-    }
-
-    .mountain {
-      width: 74%;
-      height: 36%;
-      left: 13%;
-      bottom: 19%;
-      clip-path: polygon(0 100%, 20% 48%, 31% 68%, 46% 22%, 61% 72%, 74% 42%, 100% 100%);
-      opacity: 0.9;
-    }
-
-    .tree-line {
-      width: 112%;
-      height: 26%;
-      left: -6%;
-      bottom: 0;
-      clip-path: polygon(0 100%, 0 58%, 6% 70%, 9% 42%, 13% 68%, 17% 36%, 22% 66%, 27% 44%, 34% 68%, 38% 34%, 42% 62%, 49% 44%, 56% 70%, 63% 32%, 69% 66%, 75% 46%, 82% 70%, 88% 38%, 94% 68%, 100% 50%, 100% 100%);
-    }
-
-    .torii {
-      width: 42%;
-      height: 50%;
-      right: 9%;
-      bottom: 0;
-      background: transparent;
-      filter: none;
-    }
-
-    .torii::before,
-    .torii::after {
-      content: "";
-      position: absolute;
-      background: #050403;
-    }
-
-    .torii::before {
+      top: -100%;
       left: 0;
-      right: 0;
-      top: 6%;
-      height: 11%;
-      box-shadow: 0 44px 0 #050403;
-      transform: skewX(-8deg);
-    }
-
-    .torii::after {
-      left: 24%;
-      top: 17%;
-      width: 52%;
-      height: 83%;
-      border-left: 26px solid #050403;
-      border-right: 26px solid #050403;
-    }
-
-    .bamboo {
-      width: 34%;
-      height: 82%;
-      left: -3%;
-      bottom: -4%;
-      background: transparent;
-      filter: none;
-    }
-
-    .bamboo::before,
-    .bamboo::after {
-      content: "";
-      position: absolute;
-      bottom: 0;
-      width: 14px;
+      width: 100%;
       height: 100%;
-      background: #050403;
-      border-radius: 999px;
-      transform-origin: bottom;
+      background: linear-gradient(
+        to bottom,
+        transparent,
+        rgba(228, 204, 170, 0.45),
+        transparent
+      );
+      animation: cue 2.2s ease-in-out infinite;
     }
 
-    .bamboo::before {
-      left: 30%;
-      transform: rotate(-5deg);
-      box-shadow: 40px 14px 0 #050403, 82px -20px 0 #050403;
+    @keyframes cue {
+      to { top: 100%; }
     }
 
-    .bamboo::after {
-      left: 56%;
-      height: 92%;
-      transform: rotate(7deg);
+    /* ─── Stage — scène principale ───────────────
+       height: 100vh → ScrollTrigger pinner la section
+       Le scroll "virtuel" est de 500vh (défini dans le JS)
+    ─────────────────────────────────────────────── */
+    #stage {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+      overflow: hidden;
+      background: #0b0703;
     }
 
+    /* ─── Calques ─────────────────────────────── */
+    .layer {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      will-change: transform, opacity;
+    }
+
+    .layer img {
+      position: absolute;
+      display: block;
+      /* Empêche la sélection accidentelle sur mobile */
+      user-select: none;
+      -webkit-user-drag: none;
+    }
+
+    /* L1 – Soleil */
+    #l-sun img {
+      width: clamp(160px, 24vw, 340px);
+      top: 7%;
+      left: 50%;
+      transform: translateX(-50%);
+      /* Légère luminosité pour que le soleil "brille" */
+      filter: brightness(1.08) saturate(1.1);
+    }
+
+    /* L2 – Nuages gauche */
+    #l-clouds-l img {
+      width: clamp(300px, 58vw, 780px);
+      top: 0;
+      left: -2%;
+    }
+
+    /* L2 – Nuages droite */
+    #l-clouds-r img {
+      width: clamp(300px, 58vw, 780px);
+      top: 0;
+      right: -2%;
+    }
+
+    /* L3 – Pagode */
+    #l-pagoda img {
+      width: clamp(200px, 30vw, 440px);
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    /* L4 – Grue */
+    #l-crane img {
+      width: clamp(140px, 20vw, 280px);
+      top: 22%;
+      right: 13%;
+    }
+
+    /* L5 – Feuilles flottantes
+       NOTE PROD : remplacer floating-leaves.png par une
+       version WebP ≤ 400 Ko. Actuellement 3 Mo.
+    */
+    #l-leaves img {
+      width: 100%;
+      bottom: 0;
+      left: 0;
+    }
+
+    /* ─── États initiaux des calques ─────────────
+       Tous invisibles. GSAP les révèle progressivement.
+    ─────────────────────────────────────────────── */
+    #l-sun      { opacity: 0; }
+    #l-clouds-l { opacity: 0; }
+    #l-clouds-r { opacity: 0; }
+    #l-pagoda   { opacity: 0; }
+    #l-crane    { opacity: 0; }
+    #l-leaves   { opacity: 0; }
+
+    /* ─── Captions ────────────────────────────── */
+    .caption {
+      position: absolute;
+      z-index: 100;
+      opacity: 0;
+      will-change: opacity, transform;
+      pointer-events: none;
+      /* Séparateur vertical gauche */
+    }
+
+    .caption::before {
+      content: '';
+      position: absolute;
+      left: -1.4rem;
+      top: 0.2em;
+      height: 100%;
+      width: 1px;
+      background: rgba(228, 204, 170, 0.18);
+    }
+
+    .caption-eyebrow {
+      font-size: 0.6rem;
+      letter-spacing: 0.32em;
+      text-transform: uppercase;
+      color: rgba(228, 204, 170, 0.38);
+      margin-bottom: 0.7rem;
+      font-weight: 400;
+    }
+
+    .caption-title {
+      font-family: 'Cinzel Decorative', serif;
+      font-size: clamp(1.4rem, 3.2vw, 2.8rem);
+      line-height: 1.12;
+      color: #e4ccaa;
+      font-weight: 400;
+    }
+
+    .caption-body {
+      margin-top: 1rem;
+      font-size: clamp(0.82rem, 1.1vw, 0.96rem);
+      color: rgba(228, 204, 170, 0.48);
+      line-height: 1.8;
+      max-width: 300px;
+      font-weight: 400;
+    }
+
+    /* Positionnement — bas gauche par défaut */
+    #cap-1 {
+      bottom: 13%;
+      left: 7%;
+      transform: translateY(18px);
+    }
+
+    #cap-2 {
+      bottom: 13%;
+      left: 7%;
+      transform: translateY(18px);
+    }
+
+    /* Cap-3 : grue → haut droit */
+    #cap-3 {
+      top: 38%;
+      right: 7%;
+      text-align: right;
+      transform: translateY(18px);
+    }
+
+    #cap-3::before {
+      left: auto;
+      right: -1.4rem;
+    }
+
+    #cap-3 .caption-body {
+      margin-left: auto;
+    }
+
+    #cap-4 {
+      bottom: 13%;
+      left: 7%;
+      transform: translateY(18px);
+    }
+
+    /* ─── Outro ──────────────────────────────── */
     .outro {
       min-height: 100vh;
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
       text-align: center;
       padding: 2rem;
-      background: #090603;
+      background: #06030100;
+      background-image: radial-gradient(
+        ellipse 60% 40% at 50% 100%,
+        rgba(140, 60, 10, 0.1),
+        transparent 70%
+      );
+    }
+
+    .outro-eyebrow {
+      font-size: 0.6rem;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: rgba(228, 204, 170, 0.25);
+      margin-bottom: 1.5rem;
     }
 
     .outro h2 {
-      font-size: clamp(2.5rem, 8vw, 7rem);
-      line-height: 0.9;
-      letter-spacing: -0.06em;
-      text-transform: uppercase;
+      font-family: 'Cinzel Decorative', serif;
+      font-size: clamp(2rem, 5.5vw, 5rem);
+      letter-spacing: 0.06em;
+      color: rgba(228, 204, 170, 0.7);
+      font-weight: 400;
     }
 
+    /* ─── Mobile ─────────────────────────────── */
     @media (max-width: 768px) {
-      .panel {
-        width: 92vw;
-        height: 76vh;
-        border-radius: 1.2rem;
-      }
+      /* Texture papier désactivée sur mobile — trop lourde */
+      #paper-overlay { display: none; }
 
-      .torii {
-        width: 58%;
-        right: -7%;
-      }
+      #l-sun img    { width: 42vw; }
+      #l-pagoda img { width: 75vw; }
+      #l-crane img  { width: 36vw; right: 4%; }
 
-      .bamboo {
-        width: 52%;
+      /* Captions : tout à gauche, une seule colonne */
+      .caption {
+        left: 5% !important;
+        right: 5% !important;
+        text-align: left !important;
       }
+      #cap-3 { top: auto; bottom: 13%; }
+      #cap-3::before { right: auto; left: -1.4rem; }
+      #cap-3 .caption-body { margin-left: 0; }
+    }
+
+    /* ─── Accessibilité ──────────────────────── */
+    @media (prefers-reduced-motion: reduce) {
+      .scroll-cue-line::after { animation: none; opacity: 0.5; top: 50%; }
     }
   </style>
 </head>
-
 <body>
-  <main>
-    <section class="intro">
-      <h1>Portfolio<br>théâtre d’ombres</h1>
-      <p>
-        Prototype GSAP : chaque panneau vient s’ajouter au précédent et reste bloqué dans sa position finale,
-        comme une pile de décors de théâtre japonais.
-      </p>
-      <div class="scroll-indicator" aria-hidden="true"></div>
-    </section>
 
-    <div class="stack-wrapper">
-      <section class="panel-section">
-        <article class="panel">
-          <div class="panel-bg" style="background: linear-gradient(135deg, #46210d, #d07326 45%, #1d0d06);"></div>
-          <div class="sun silhouette"></div>
-          <div class="mountain silhouette"></div>
-          <div class="panel-content">
-            <span class="panel-kicker">Panneau 01</span>
-            <h2 class="panel-title">Fond montagne</h2>
-            <p class="panel-text">Le premier décor reste fixé. Les panneaux suivants viennent s’empiler au-dessus sans l’effacer.</p>
-          </div>
-        </article>
-      </section>
+  <!-- L0 — Overlay texture papier (permanent, toutes sections) -->
+  <div id="paper-overlay" aria-hidden="true"></div>
 
-      <section class="panel-section">
-        <article class="panel">
-          <div class="panel-bg" style="background: linear-gradient(135deg, #1c2615, #778c3a 48%, #100c05);"></div>
-          <div class="tree-line silhouette"></div>
-          <div class="panel-content">
-            <span class="panel-kicker">Panneau 02</span>
-            <h2 class="panel-title">Forêt lointaine</h2>
-            <p class="panel-text">Ce panneau arrive par le bas, se cale au centre, puis reste à sa place pendant la suite du scroll.</p>
-          </div>
-        </article>
-      </section>
+  <!-- ─── Intro ─── -->
+  <section class="intro" aria-labelledby="intro-title">
+    <p class="intro-eyebrow" aria-hidden="true">L'encre vivante</p>
+    <h1 id="intro-title">Théâtre<br>d'ombres</h1>
+    <p class="intro-sub">
+      Une scène en papier découpé. Chaque couche révèle un peu plus du monde.
+    </p>
+    <div class="scroll-cue" aria-hidden="true">
+      <span>scroll</span>
+      <div class="scroll-cue-line"></div>
+    </div>
+  </section>
 
-      <section class="panel-section">
-        <article class="panel">
-          <div class="panel-bg" style="background: linear-gradient(135deg, #111, #77411a 48%, #170b04);"></div>
-          <div class="torii silhouette"></div>
-          <div class="panel-content">
-            <span class="panel-kicker">Panneau 03</span>
-            <h2 class="panel-title">Décor principal</h2>
-            <p class="panel-text">Le principe peut ensuite être remplacé par tes vrais assets : torii, dragon, vagues, brume, papier déchiré, etc.</p>
-          </div>
-        </article>
-      </section>
+  <!-- ─── Stage — scène principale ─── -->
+  <section id="stage" aria-label="Théâtre d'ombres, composition en couches">
 
-      <section class="panel-section">
-        <article class="panel">
-          <div class="panel-bg" style="background: linear-gradient(135deg, #08110b, #2a4a31 48%, #050604);"></div>
-          <div class="bamboo silhouette"></div>
-          <div class="panel-content">
-            <span class="panel-kicker">Panneau 04</span>
-            <h2 class="panel-title">Premier plan</h2>
-            <p class="panel-text">Dernier panneau de la pile. Il reste bloqué dans sa position finale avant la sortie vers la suite du site.</p>
-          </div>
-        </article>
-      </section>
+    <!-- L1 : Soleil — plan lointain, vitesse la plus lente -->
+    <div class="layer" id="l-sun" aria-hidden="true">
+      <img src="sun.png" alt="">
     </div>
 
-    <section class="outro">
-      <h2>Suite du portfolio</h2>
-    </section>
-  </main>
+    <!-- L2 : Nuages — plan ciel, symétrie gauche/droite -->
+    <div class="layer" id="l-clouds-l" aria-hidden="true">
+      <img src="clouds-left.png" alt="">
+    </div>
+    <div class="layer" id="l-clouds-r" aria-hidden="true">
+      <img src="clouds-right.png" alt="">
+    </div>
 
+    <!-- L3 : Pagode — mid-ground architectural -->
+    <div class="layer" id="l-pagoda" aria-hidden="true">
+      <img src="pagoda.png" alt="">
+    </div>
+
+    <!-- L4 : Grue — sujet principal, au-dessus du mid-ground -->
+    <div class="layer" id="l-crane" aria-hidden="true">
+      <img src="crane.png" alt="">
+    </div>
+
+    <!-- L5 : Feuilles flottantes — avant-plan, ferme la scène -->
+    <div class="layer" id="l-leaves" aria-hidden="true">
+      <img src="floating-leaves.png" alt="">
+    </div>
+
+    <!-- ─── Captions narratives ─── -->
+    <div class="caption" id="cap-1" role="region" aria-label="Phase 1">
+      <p class="caption-eyebrow">01 — Ciel</p>
+      <h2 class="caption-title">L'aube<br>se lève</h2>
+      <p class="caption-body">
+        Le soleil perce la brume. Un monde s'éveille dans les silhouettes du papier découpé.
+      </p>
+    </div>
+
+    <div class="caption" id="cap-2" role="region" aria-label="Phase 2">
+      <p class="caption-eyebrow">02 — Architecture</p>
+      <h2 class="caption-title">La pagode<br>silencieuse</h2>
+      <p class="caption-body">
+        Ancrée dans la plaine, elle veille. Les nuages glissent à sa droite depuis des siècles.
+      </p>
+    </div>
+
+    <div class="caption" id="cap-3" role="region" aria-label="Phase 3">
+      <p class="caption-eyebrow">03 — Présence</p>
+      <h2 class="caption-title">La grue<br>passe</h2>
+      <p class="caption-body">
+        Un seul mouvement. Une grâce que le papier retient sans jamais la figer.
+      </p>
+    </div>
+
+    <div class="caption" id="cap-4" role="region" aria-label="Phase 4">
+      <p class="caption-eyebrow">04 — Profondeur</p>
+      <h2 class="caption-title">La scène<br>complète</h2>
+      <p class="caption-body">
+        Toutes les couches sont là. L'ombre est une. La profondeur est réelle.
+      </p>
+    </div>
+
+  </section>
+
+  <!-- ─── Outro ─── -->
+  <section class="outro" aria-labelledby="outro-title">
+    <p class="outro-eyebrow">Portfolio</p>
+    <h2 id="outro-title">L'encre vivante</h2>
+  </section>
+
+  <!-- ─── Scripts ─── -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/ScrollTrigger.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   <script src="https://unpkg.com/lenis@1.3.17/dist/lenis.min.js"></script>
 
   <script>
-    gsap.registerPlugin(ScrollTrigger);
+    /* ────────────────────────────────────────────
+       INITIALISATION
+    ──────────────────────────────────────────── */
+    gsap.registerPlugin(ScrollTrigger)
 
+    /* Lenis → inertie douce du scroll */
     const lenis = new Lenis({
-      lerp: 0.08,
+      lerp: 0.085,        /* douceur d'inertie — 0.08 = fluide, 0.12 = plus rapide */
       smoothWheel: true
-    });
+    })
 
-    lenis.on("scroll", ScrollTrigger.update);
+    /* Brancher Lenis sur le RAF de GSAP */
+    lenis.on('scroll', ScrollTrigger.update)
+    gsap.ticker.add(t => lenis.raf(t * 1000))
+    gsap.ticker.lagSmoothing(0)
 
-    gsap.ticker.add((time) => {
-      lenis.raf(time * 1000);
-    });
+    /* ────────────────────────────────────────────
+       MOBILE : facteurs réduits
+    ──────────────────────────────────────────── */
+    const mobile = window.matchMedia('(max-width: 768px)').matches
+    /* Sur mobile, on réduit toutes les amplitudes de parallax de 50% */
+    const px = v => mobile ? v * 0.5 : v
 
-    gsap.ticker.lagSmoothing(0);
+    /* ────────────────────────────────────────────
+       TIMELINE PRINCIPALE
+       La section #stage est pinnée pendant 500vh.
+       La timeline scrubée mappe chaque % de scroll
+       à une étape narrative précise.
 
-    const sections = gsap.utils.toArray(".panel-section");
-
-    sections.forEach((section, index) => {
-      const panel = section.querySelector(".panel");
-      const bg = section.querySelector(".panel-bg");
-
-      gsap.set(section, {
-        zIndex: index + 1
-      });
-
-      if (index === 0) {
-        gsap.set(panel, {
-          yPercent: 0,
-          z: 0,
-          rotationX: 0,
-          scale: 1
-        });
-      } else {
-        gsap.set(panel, {
-          yPercent: 120,
-          z: -500,
-          rotationX: -35,
-          scale: 0.94
-        });
-      }
-
-      ScrollTrigger.create({
-        trigger: section,
-        start: "top top",
-        end: "bottom top",
+       Découpage :
+         t 0.0 → 1.6  Phase 1 : ciel + soleil + nuages
+         t 1.6 → 3.2  Phase 2 : pagode
+         t 3.2 → 4.2  Phase 3 : grue
+         t 4.2 → 5.0  Phase 4 : feuilles + scène complète
+    ──────────────────────────────────────────── */
+    const tl = gsap.timeline({
+      defaults: { ease: 'none' },
+      scrollTrigger: {
+        trigger: '#stage',
         pin: true,
-        pinSpacing: false
-      });
-
-      if (index > 0) {
-        gsap.to(panel, {
-          yPercent: 0,
-          z: 0,
-          rotationX: 0,
-          scale: 1,
-          ease: "none",
-          scrollTrigger: {
-            trigger: section,
-            start: "top bottom",
-            end: "top top",
-            scrub: true
-          }
-        });
+        pinSpacing: true,
+        scrub: 1.2,         /* inertie de 1.2s — feel "suspendu" */
+        start: 'top top',
+        end: '+=500%',      /* 500vh de scroll pour traverser la scène */
+        anticipatePin: 1    /* évite le flash au moment du pin */
       }
+    })
 
-      gsap.to(bg, {
-        scale: 1,
-        ease: "none",
-        scrollTrigger: {
-          trigger: section,
-          start: "top bottom",
-          end: "bottom top",
-          scrub: true
-        }
-      });
-    });
+    /* ─── Helper dissolve ─── */
+    /* Entrée : opacity + légère montée */
+    function fadeIn(target, at, opts = {}) {
+      tl.fromTo(target,
+        { opacity: 0, y: opts.y ?? 28 },
+        { opacity: 1, y: 0, duration: opts.dur ?? 1, ease: 'power2.out', ...opts },
+        at
+      )
+    }
+
+    /* Sortie caption : opacity → 0, légère montée */
+    function capOut(target, at) {
+      tl.to(target, { opacity: 0, y: -14, duration: 0.45, ease: 'power1.in' }, at)
+    }
+
+    /* ─── Phase 1 (t 0 → 1.6) : Révélation du ciel ─── */
+    fadeIn('#l-sun',      0,    { dur: 1.2, y: 20 })
+    fadeIn('#l-clouds-l', 0.3,  { dur: 1,   y: 0 })   /* nuages glissent horizontalement */
+    fadeIn('#l-clouds-r', 0.45, { dur: 1,   y: 0 })
+    /* Caption 1 */
+    tl.fromTo('#cap-1',
+      { opacity: 0, y: 18 },
+      { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out' },
+      0.9
+    )
+
+    /* ─── Phase 2 (t 1.6 → 3.2) : Pagode ─── */
+    /* Sortie caption 1 */
+    capOut('#cap-1', 1.6)
+    /* Entrée pagode */
+    fadeIn('#l-pagoda', 2.0, { dur: 1.1, y: 35 })
+    /* Caption 2 */
+    tl.fromTo('#cap-2',
+      { opacity: 0, y: 18 },
+      { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out' },
+      2.5
+    )
+    /* Parallax du ciel pendant Phase 2 : soleil et nuages bougent vers le haut/extérieur */
+    tl.to('#l-sun',      { y: px(-38), duration: 1.6 }, 1.6)
+    tl.to('#l-clouds-l', { x: px(-28), duration: 1.6 }, 1.6)
+    tl.to('#l-clouds-r', { x: px( 28), duration: 1.6 }, 1.6)
+
+    /* ─── Phase 3 (t 3.2 → 4.2) : Grue ─── */
+    capOut('#cap-2', 3.2)
+    fadeIn('#l-crane', 3.4, { dur: 0.8, y: 16 })
+    /* Caption 3 */
+    tl.fromTo('#cap-3',
+      { opacity: 0, y: 18 },
+      { opacity: 1, y: 0, duration: 0.55, ease: 'power2.out' },
+      3.7
+    )
+    /* Pagode monte légèrement (mid-ground bouge plus vite que le ciel) */
+    tl.to('#l-pagoda', { y: px(-22), duration: 1 }, 3.2)
+    /* Ciel continue sa dérive */
+    tl.to('#l-sun',      { y: px(-56), duration: 1 }, 3.2)
+    tl.to('#l-clouds-l', { x: px(-42), duration: 1 }, 3.2)
+    tl.to('#l-clouds-r', { x: px( 42), duration: 1 }, 3.2)
+
+    /* ─── Phase 4 (t 4.2 → 5.0) : Feuilles + scène complète ─── */
+    capOut('#cap-3', 4.2)
+    /* Feuilles : simple dissolve opacity, pas de translate — elles couvrent tout */
+    tl.fromTo('#l-leaves',
+      { opacity: 0 },
+      { opacity: 1, duration: 1.2, ease: 'power2.out' },
+      4.2
+    )
+    /* Caption 4 */
+    tl.fromTo('#cap-4',
+      { opacity: 0, y: 18 },
+      { opacity: 1, y: 0, duration: 0.55, ease: 'power2.out' },
+      4.6
+    )
+    /* Parallax final — chaque calque à sa vitesse, profondeur maximale */
+    tl.to('#l-sun',      { y: px(-72), duration: 0.8 }, 4.2)
+    tl.to('#l-clouds-l', { x: px(-54), duration: 0.8 }, 4.2)
+    tl.to('#l-clouds-r', { x: px( 54), duration: 0.8 }, 4.2)
+    tl.to('#l-pagoda',   { y: px(-38), duration: 0.8 }, 4.2)
+    tl.to('#l-crane',    { y: px(-18), duration: 0.8 }, 4.2)
+    /* Les feuilles (L5) ne bougent pas — elles "ferment" la scène */
+
+    /* ────────────────────────────────────────────
+       AMBIENT — micro-animations après la scène
+       Déclenchées quand le scroll quitte le stage,
+       après les 500vh. Elles tournent en boucle infinie.
+    ──────────────────────────────────────────── */
+    ScrollTrigger.create({
+      trigger: '#stage',
+      start: 'top top',
+      end: '+=500%',
+      onLeave: startAmbient,
+      onEnterBack: stopAmbient
+    })
+
+    let ambientActive = false
+    const ambientTweens = []
+
+    function startAmbient() {
+      if (ambientActive) return
+      ambientActive = true
+
+      /* Grue : sway vertical très doux, 5s */
+      ambientTweens.push(
+        gsap.to('#l-crane img', {
+          y: -8,
+          duration: 5,
+          ease: 'sine.inOut',
+          yoyo: true,
+          repeat: -1
+        })
+      )
+
+      /* Nuages : dérive horizontale imperceptible */
+      ambientTweens.push(
+        gsap.to('#l-clouds-l img', {
+          x: -12,
+          duration: 9,
+          ease: 'sine.inOut',
+          yoyo: true,
+          repeat: -1,
+          delay: 1
+        }),
+        gsap.to('#l-clouds-r img', {
+          x: 12,
+          duration: 11,
+          ease: 'sine.inOut',
+          yoyo: true,
+          repeat: -1,
+          delay: 2
+        })
+      )
+
+      /* Feuilles : légère dérive diagonale */
+      ambientTweens.push(
+        gsap.to('#l-leaves img', {
+          x: 10,
+          y: -5,
+          duration: 8,
+          ease: 'sine.inOut',
+          yoyo: true,
+          repeat: -1,
+          delay: 0.5
+        })
+      )
+    }
+
+    function stopAmbient() {
+      if (!ambientActive) return
+      ambientActive = false
+      ambientTweens.forEach(t => t.kill())
+      ambientTweens.length = 0
+    }
+
+    /* ────────────────────────────────────────────
+       ACCESSIBILITÉ — prefers-reduced-motion
+       On désactive toutes les animations continues
+       mais on garde les révélations au scroll.
+    ──────────────────────────────────────────── */
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      /* Révéler tous les calques directement sans animation */
+      gsap.set(['#l-sun','#l-clouds-l','#l-clouds-r','#l-pagoda','#l-crane','#l-leaves'], {
+        opacity: 1
+      })
+    }
+
   </script>
 </body>
 </html>
